@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../data/appData.dart';
+import '../../firebase/auth.Firebase.dart';
+import '../../models/apps/userInfo.Model.dart';
 import '../../routers/app.Router.dart';
 import '../catalog/catalog.Binding.dart';
 import '../catalog/catalog.Container.dart';
@@ -15,8 +17,13 @@ import '../profile/profile.Binding.dart';
 import '../profile/profile.Container.dart';
 
 class MainController extends GetxController with GetTickerProviderStateMixin {
+  static MainController get initance => Get.find();
+
+  RxBool isLoadingPage = true.obs;
   RxInt tabIndex = 0.obs;
   RxInt tabIndexOld = 0.obs;
+  Rx<UserInfoModel> userData = Rx(UserInfoModel());
+
   List<String> routerList = [AppRouter.home,AppRouter.catalog,AppRouter.discount,AppRouter.notify, AppRouter.profile];
   // late TabController tabController;
   @override
@@ -27,6 +34,7 @@ class MainController extends GetxController with GetTickerProviderStateMixin {
 
   @override
   void onReady() async {
+    getUserData();
     super.onReady();
   }
 
@@ -97,4 +105,21 @@ class MainController extends GetxController with GetTickerProviderStateMixin {
         );
     }
   }
+
+  getUserData() async {
+    final email = FireAuth.instance.firebaseUser.value?.email;
+    if(email != null) {
+      return userData.value = await FireAuth.instance.getUserDetails(email);
+    } else {
+      Get.snackbar("Error", "Login to continue");
+    }
+  }
+
+  // checkToken() async {
+  //   String token = await getSharedPreferences("token", "String");
+  //   if(userData.value.token != token){
+  //     Alert.showMsgDialog(context, title:"Sign-out", "Có người đã đăng nhập tài khoản của bạn");
+  //     FireAuth.instance.signOut();
+  //   }
+  // }
 }

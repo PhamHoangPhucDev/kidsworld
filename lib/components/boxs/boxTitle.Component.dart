@@ -24,14 +24,18 @@ class _BoxTitleComponentState extends State<BoxTitleComponent> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(widget.title!,style: TextStyle(color: AppColor.whiteColor,fontSize: 14,fontWeight: FontWeight.w600),),
+          Expanded(
+            flex: 6,
+            child: Text(widget.title!,style: TextStyle(color: AppColor.whiteColor,fontSize: 14,fontWeight: FontWeight.w600),)
+          ),
           Visibility(
             visible: widget.onTap!=null,
-            child: GestureDetector(
-              onTap: (){
-                if(widget.onTap!=null) widget.onTap;
-              },
-              child: Text(widget.titleOnTap!,style: TextStyle(color: AppColor.whiteColor,fontSize: 12,fontWeight: FontWeight.w500),),
+            child: Expanded(
+              flex: 6,
+              child: GestureDetector(
+                onTap: widget.onTap??(){},
+                child: Text(widget.titleOnTap!,style: TextStyle(color: AppColor.whiteColor,fontSize: 12,fontWeight: FontWeight.w500),),
+              ),
             ),
           )
         ],

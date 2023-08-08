@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "29540370954",
+    "firebase_url": "https://kidsworld-48ee4-default-rtdb.firebaseio.com",
+    "project_id": "kidsworld-48ee4",
+    "storage_bucket": "kidsworld-48ee4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29540370954:android:3536f9a96afcef9319adf3",
+        "android_client_info": {
+          "package_name": "com.example.kidsworld"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "29540370954-7n9cd8755tf267p1crdhiv19iq4ifjbk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJCnqQL04Mjn5pmDnGEMs8wLsjsZM03ik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "29540370954-7n9cd8755tf267p1crdhiv19iq4ifjbk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "29540370954-sh8nil27mdf9cvpso5i7pf3c4tbh47vd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.kidsworld"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

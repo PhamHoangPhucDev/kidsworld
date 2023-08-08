@@ -4,7 +4,7 @@
 import 'dart:io';
 // import 'dart:math';
 // import 'package:connectivity/connectivity.dart';
-// import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 // import 'package:erpcore/components/alerts/alert.dart';
 // import 'package:erpcore/configs/activation.Config.dart';
 // import 'package:erpcore/configs/app.Config.dart';
@@ -23,7 +23,6 @@ import 'dart:io';
 // import 'package:erpcore/models/activations/working/workingPlanAct.Model.dart';
 // import 'package:erpcore/models/apps/PrDate.Model.dart';
 // import 'package:erpcore/models/apps/PrFileUpload.Model.dart';
-// import 'package:erpcore/models/apps/deviceDetail.Model.dart';
 // import 'package:erpcore/models/apps/internetConnectionInfo.Model.dart';
 // import 'package:erpcore/models/apps/prCodeName.Model.dart';
 // import 'package:erpcore/models/apps/responses.Model.dart';
@@ -37,10 +36,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../configs/appStyle.Config.dart';
+import '../models/apps/deviceDetail.Model.dart';
 import 'logs/appLogs.Utility.dart';
-// import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
 // import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 // import 'package:flutter_image_compress/flutter_image_compress.dart';
 // import 'package:intl/intl.dart';
@@ -53,7 +54,7 @@ import 'logs/appLogs.Utility.dart';
 // import 'package:record/record.dart';
 // import 'package:url_launcher/url_launcher.dart';
 // import 'package:url_launcher/url_launcher_string.dart';
-// import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid.dart';
 import 'package:path/path.dart' as p;
 
 // List colors = [Colors.red, Colors.green, Colors.yellow];
@@ -113,10 +114,10 @@ import 'package:path/path.dart' as p;
 //     return dbPath;
 //   }
 
-// String generateKeyCode() {
-//   var uuid = Uuid();
-//   return uuid.v1().toString();
-// }
+String generateKeyCode() {
+  var uuid = Uuid();
+  return uuid.v1().toString();
+}
 
 // // get extension by path or url
 // String checkExtensionFile(String url) {
@@ -261,31 +262,31 @@ import 'package:path/path.dart' as p;
 //   return result;
 // }
 
-// // get Device Info
-// Future<DeviceDetails> getDeviceDetails() async {
-//   DeviceDetails deviceInfo = new DeviceDetails();
-//   final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
-//   try {
-//     if (Platform.isAndroid) {
-//       var build = await deviceInfoPlugin.androidInfo;
-//       deviceInfo.deviceName = build.model;
-//       deviceInfo.deviceVersion = build.version.toString();
-//       deviceInfo.identifier = build.androidId; //UUID for Android
-//       deviceInfo.systemName = 'Android';
-//       deviceInfo.systemVersion = build.version.release;
-//     } else if (Platform.isIOS) {
-//       var data = await deviceInfoPlugin.iosInfo;
-//       deviceInfo.deviceName = data.name;
-//       deviceInfo.deviceVersion = data.systemVersion;
-//       deviceInfo.identifier = data.identifierForVendor; //UUID for iOS
-//       deviceInfo.systemName = data.systemName;
-//       deviceInfo.systemVersion = data.systemVersion;
-//     }
-//   } on PlatformException {
-//     print('Failed to get platform version');
-//   }
-//   return deviceInfo;
-// }
+// get Device Info
+Future<DeviceDetailsModel> getDeviceDetails() async {
+  DeviceDetailsModel deviceInfo = DeviceDetailsModel();
+  final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  try {
+    if (Platform.isAndroid) {
+      var build = await deviceInfoPlugin.androidInfo;
+      deviceInfo.deviceName = build.model;
+      deviceInfo.deviceVersion = build.version.toString();
+      deviceInfo.identifier = build.id; //UUID for Android
+      deviceInfo.systemName = 'Android';
+      deviceInfo.systemVersion = build.version.release;
+    } else if (Platform.isIOS) {
+      var data = await deviceInfoPlugin.iosInfo;
+      deviceInfo.deviceName = data.name;
+      deviceInfo.deviceVersion = data.systemVersion;
+      deviceInfo.identifier = data.identifierForVendor; //UUID for iOS
+      deviceInfo.systemName = data.systemName;
+      deviceInfo.systemVersion = data.systemVersion;
+    }
+  } on PlatformException {
+    print('Failed to get platform version');
+  }
+  return deviceInfo;
+}
 
 // // handle token
 
@@ -826,66 +827,66 @@ import 'package:path/path.dart' as p;
 //     return result;
 //   }
 
-//   String getUnitNumber(dynamic number) {
-//     String result = "";
-//     try {
-//       // String numberOfText = ((number as double).toInt()).toString();
-//       String numberOfText = (number).toString();
-//       switch (numberOfText.length) {
-//         case 6:
-//           result = "trăm";
-//           break;
-//         case 7:
-//           result = "tr";
-//           break;
-//         case 8:
-//           result = "tr";
-//           break;
-//         case 9:
-//           result = "tr";
-//           break;
-//         case 10:
-//           result = "tỷ";
-//           break;
-//         case 11:
-//           result = "tỷ";
-//           break;
-//         case 12:
-//           result = "tỷ";
-//           break;
-//         case 13:
-//           result = "tỷ";
-//           break;
-//         case 14:
-//           result = "tỷ";
-//           break;
-//       }
-//     } catch (ex) {
-//       print(ex);
-//       AppLogsUtils.instance.writeLogs(ex,func: "getUnitNumber app.Utility");
-//     }
-//     return result;
-//   }
+  String getUnitNumber(dynamic number) {
+    String result = "";
+    try {
+      // String numberOfText = ((number as double).toInt()).toString();
+      String numberOfText = (number).toString();
+      switch (numberOfText.length) {
+        case 6:
+          result = "trăm";
+          break;
+        case 7:
+          result = "tr";
+          break;
+        case 8:
+          result = "tr";
+          break;
+        case 9:
+          result = "tr";
+          break;
+        case 10:
+          result = "tỷ";
+          break;
+        case 11:
+          result = "tỷ";
+          break;
+        case 12:
+          result = "tỷ";
+          break;
+        case 13:
+          result = "tỷ";
+          break;
+        case 14:
+          result = "tỷ";
+          break;
+      }
+    } catch (ex) {
+      print(ex);
+      AppLogsUtils.instance.writeLogs(ex,func: "getUnitNumber app.Utility");
+    }
+    return result;
+  }
 
-//   String compactNumberToText(dynamic number) {
-//     String result = "0";
-//     try {
-//       int divisor = 1;
-//       // int length = ((number as double).toInt()).toString().length;
-//       int length = (number).toString().length;
-//       if (length <= 6) {
-//         divisor = 100000;
-//       } else if (6 < length && length < 10) {
-//         divisor = 1000000;
-//       } else if (9 < length) {
-//         divisor = 1000000000;
-//       }
-//       result = (number / divisor).toStringAsFixed(2);
-//     } catch (ex) {
-//       AppLogsUtils.instance.writeLogs(ex,func: "compactNumberToText app.Utility");
-//     }
-//     return result;
-//   }
+  String compactNumberToText(dynamic number) {
+    String result = "0";
+    try {
+      int divisor = 1;
+      // int length = ((number as double).toInt()).toString().length;
+      int length = (number).toString().length;
+      if (length <= 6) {
+        divisor = 1000;//00
+      } else if (6 < length && length < 10) {
+        divisor = 10000;//00
+      } else if (9 < length) {
+        divisor = 10000000;//00
+      }
+      result = (number / divisor).toStringAsFixed(3);
+    } catch (ex) {
+      AppLogsUtils.instance.writeLogs(ex,func: "compactNumberToText app.Utility");
+    }
+    return result;
+  }
 
 //   // nếu type = true --> trả về url có gắn api và ngược lại
 //   String getServerName(bool type,{bool byPackageName=false}){
@@ -1337,7 +1338,7 @@ import 'package:path/path.dart' as p;
 // }
 
 // Future<String> getEncodeTraining(UserInfoModel userProfle) async {
-//     DeviceDetails device = await getDeviceDetails();
+//     DeviceDetailsModel device = await getDeviceDetailsModel();
 //     Map<String, dynamic> map = {};
 //     map['AccountId'] = 1000000;
 //     map['CoachingID'] = '';
@@ -1385,3 +1386,53 @@ import 'package:path/path.dart' as p;
 //     }
 //   }
 
+  addSharedPreferences(String key,dynamic value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(value.runtimeType == String){
+      await prefs.setString(key, value);
+    } else if (value.runtimeType == int){
+      await prefs.setInt(key, value);
+    } else if (value.runtimeType == bool){
+      await prefs.setBool(key, value);
+    } else if (value.runtimeType == double){
+      await prefs.setDouble(key, value);
+    } else if (value.runtimeType == List){
+      await prefs.setStringList(key, value);
+    } else {
+      print("Not add SharedPreferences");
+    }
+  }
+
+  Future getSharedPreferences(String key,String type) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic result;
+    if(type == "String"){
+      result = prefs.getString(key);
+    } else if (type == "int"){
+      result = prefs.getInt(key);
+    } else if (type == "bool"){
+      result = prefs.getBool(key);
+    } else if (type == "double"){
+      result = prefs.getDouble(key);
+    } else if (type == "List"){
+      result = prefs.getStringList(key);
+    } else {
+      print("Not add SharedPreferences");
+      return;
+    }
+    return result;
+  }
+
+  removeSharedPreferences(String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(key);
+  }
+
+  double getAvgEvaluate(List? list){
+    int totalEvaluate = list?.length??1;
+    double avg = 5;
+    if(list != null && list.isNotEmpty){
+      avg = (list.map((m) => int.parse(m.star??"0")).reduce((a, b) => a + b)) / totalEvaluate;
+    }
+    return avg;
+  }

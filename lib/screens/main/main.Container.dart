@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kidsworld/screens/notify/notify.Controller.dart';
 
 import '../../components/tabBars/tabBarBottom.Component.dart';
-import '../../configs/appStyle.Config.dart';
 import '../../data/appData.dart';
 import '../../routers/app.Router.dart';
 import 'main.Controller.dart';
 
 class MainScreen extends GetWidget<MainController> {
-  MainController mainController = Get.find();
+  // MainController mainController = Get.find();
+  MainController mainController = Get.put(MainController());
   late Size size;
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      // appBar: AppBar()
       extendBody:false,
       body: _buildPageView(),
       bottomNavigationBar: Obx(()=>TabBottomComponent(
@@ -35,10 +33,14 @@ class MainScreen extends GetWidget<MainController> {
     return SizedBox(
       height: size.height,
       width: size.width,
-      child: Navigator(
-        key: Get.nestedKey(AppKey.keyTabMain),
-        initialRoute: AppRouter.home,
-        onGenerateRoute: mainController.onGenerateRoute,
+      child: SafeArea(
+        child: Navigator(
+          key: Get.nestedKey(AppKey.keyTabMain),
+          initialRoute: AppRouter.home,
+          onGenerateRoute:(settings) {
+            return mainController.onGenerateRoute(settings);  
+          }, 
+        ),
       ),
     );
   }

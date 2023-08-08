@@ -1,66 +1,154 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
+import '../../blocs/product.Bloc.dart';
+import '../../firebase/product.Firebase.dart';
+import '../../models/apps/evaluate.Model.dart';
+import '../../models/apps/prCodeName.Model.dart';
 import '../../models/apps/product.Model.dart';
+import '../../utility/app.Utility.dart';
+import '../main/main.Controller.dart';
 
 class ProductController extends GetxController {
-  RxBool isLoadingPage = false.obs;
+  static ProductController get initance => Get.find();
+
+  RxBool isLoadingPage = true.obs;
   Rx<ProductModel> itemProduct = ProductModel().obs;
   RxList<ProductModel> listProduct = RxList.empty(growable: true);
+  Rx<double> rating = 0.0.obs;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController commentController = TextEditingController();
+
+  RxList<PrCodeName> listSearchEvaluate = RxList.empty(growable: true);
+  RxList<ListEvaluatesModel> listEvaluate = RxList.empty(growable: true);
+
+  RxString isClick = "".obs;
+  late ProductBloc prdBloc;
+
 
   @override
   void onInit() {
-    itemProduct.value = ProductModel(
-        sysCode: "a12345678",
-        srcImage: "https://tse3.mm.bing.net/th?id=OIP.9vYUdXFiyo-mdVeRfegmzgHaLH&pid=Api&P=0",
-        name: "Bim bim - Sữa cà phê nguyên chất",
-        describe: "Bim Bim - Sản phẩm an toàn và tiện dụng",
-        origin: "Hàn Quốc",
-        size: "XL",
-        paddingSize: "30x5x15x40cm",
-        color: "0",
-        type: "Đồ ăn",
-        sex: "0",
-        sold: 1790,
-        priceNew: 200,
-        priceOld: 400,
-        star: 50,
-        favorite: 100,
-        prdGif: false,
-        prdHot: true,
-        prdSale: true,
-      );
-
-    listProduct.addAll([
-      ProductModel(
-        sysCode: "a12345678",
-        srcImage: "https://tse3.mm.bing.net/th?id=OIP.9vYUdXFiyo-mdVeRfegmzgHaLH&pid=Api&P=0",
-        name: "Bim bim - Sữa cà phê nguyên chất",
-        priceNew: 200,
-        priceOld: 400,
-        star: 50,
-        favorite: 100,
-        prdGif: false,
-        prdHot: true,
-        prdSale: true,
-      ),
-      ProductModel(
-        sysCode: "a12345678",
-        srcImage: "https://tse3.mm.bing.net/th?id=OIP.9vYUdXFiyo-mdVeRfegmzgHaLH&pid=Api&P=0",
-        name: "Bim - Tã quần Moony size M 52 miếng (6 miếng thông khô siêu tốc)",
-        priceNew: 385000,
-        priceOld: 395000,
-        star: 5,
-        favorite: 64,
-        prdGif: true,
-        prdHot: true,
-        prdSale: true,
-      )
-    ]);
+    prdBloc = ProductBloc(); 
     super.onInit();
   }
   
   @override
-  void onReady() {
+  void onReady() async {
+    isLoadingPage.value = true;
+    await getProductBySyscode();
+    searchEvaluate();
+    addTextSearchEvaluate();
+    isClick.value = listSearchEvaluate[0].code??"";
+    isLoadingPage.value = false;
     super.onReady();
+  }
+
+  @override
+  void refresh() {
+    isLoadingPage.value = true;
+    isLoadingPage.value = false;
+    super.refresh();
+  }
+
+  getProductBySyscode() async {
+    itemProduct.value = await FireProduct.instance.getProduct(Get.arguments);
+  }
+
+  void addTextSearchEvaluate(){
+    listSearchEvaluate.clear();
+    listSearchEvaluate.addAll([
+      PrCodeName(code: "",name: "Xem tất cả đánh giá (${itemProduct.value.evaluates?.listEvaluates?.length??0})"),
+      PrCodeName(code: "5",name: "5 sao"),
+      PrCodeName(code: "4",name: "4 sao"),
+      PrCodeName(code: "3",name: "3 sao"),
+      PrCodeName(code: "2",name: "2 sao"),
+      PrCodeName(code: "1",name: "1 sao"),
+      PrCodeName(code: "image",name: "Có hình ảnh (${0})"),
+    ]);
+  }
+
+  void searchEvaluate({String star = ""}){
+    listEvaluate.clear();
+    if (star.isNotEmpty) {
+      for (ListEvaluatesModel item in itemProduct.value.evaluates?.listEvaluates??[]) {
+        if(item.star != null && item.star!.isNotEmpty && item.star == star){
+          listEvaluate.add(item);
+        }
+      }
+    } else {
+      listEvaluate.addAll(itemProduct.value.evaluates?.listEvaluates??[]);
+    }
+    isClick.value = star;
+  }
+
+  clickEvaluateStar() async {
+    if(rating.value == 0){
+      Get.snackbar("Thông báo", "Vui lòng chọn đáng giá");
+    } else if(prdBloc.isValid(name: nameController.text,comment :commentController.text)){
+      EasyLoading.show(status: 'Loading...');
+      (itemProduct.value.evaluates?.listEvaluates??[]).add(
+        ListEvaluatesModel(
+          commentId: generateKeyCode(),
+          userName: nameController.text,
+          comment: commentController.text,
+          star: "${rating.value.toInt()}",
+          date: Timestamp.fromDate(DateTime.now()).toDate(),
+        )
+      );
+      await FireProduct.instance.updateEvaluate(productId: itemProduct.value.sysCode,listEval: itemProduct.value.evaluates?.listEvaluates)
+      .then((value){
+        Get.back();
+        // clearTextAddEval();
+        Get.snackbar("Thông báo", "Thành công");
+        searchEvaluate(star: isClick.value);
+        addTextSearchEvaluate();
+        refresh();
+      }).catchError((err){
+
+      });
+      EasyLoading.dismiss();
+    } else {
+      addListenerSink();
+    }
+  }
+
+  clearTextAddEval(){
+    rating.value = 0;
+    nameController.clear();
+    commentController.clear();
+  }
+
+  likeComment(ListEvaluatesModel comment) async {
+    int? index = itemProduct.value.evaluates?.listEvaluates?.indexOf(comment);
+    if(index != null){
+      Satisfieds? item = itemProduct.value.evaluates?.listEvaluates?[index].satisfieds;
+      if(item != null){
+        if(item.listUserId != null && item.listUserId!.isNotEmpty && item.listUserId!.contains(MainController.initance.userData.value.code)){
+          item.like = (item.like!) - 1;
+          item.listUserId?.removeWhere((e) => e == MainController.initance.userData.value.code);
+        } else {
+          item.like = (item.like??0) + 1;
+          item.listUserId?.add(MainController.initance.userData.value.code);
+        }
+      } else {
+        item = Satisfieds(like: 1,listUserId: [MainController.initance.userData.value.code??""]);
+      }
+      itemProduct.value.evaluates?.listEvaluates?[index].satisfieds = item;
+    }
+    await FireProduct.instance.updateEvaluate(productId: itemProduct.value.sysCode,listEval: itemProduct.value.evaluates?.listEvaluates)
+    .then((value) => refresh());
+  }
+
+  addListenerSink(){
+    prdBloc.nameSink.add(nameController.text);
+    nameController.addListener(() {
+      prdBloc.nameSink.add(nameController.text);
+    });
+    prdBloc.commentSink.add(commentController.text);
+    commentController.addListener(() {
+      prdBloc.commentSink.add(commentController.text);
+    });
   }
 }

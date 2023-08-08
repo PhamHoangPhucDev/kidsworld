@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:kidsworld/configs/appStyle.Config.dart';
 
 class TabBarTopComponent extends StatefulWidget {
-  const TabBarTopComponent({super.key,required this.current,required this.tabs,this.tabViews = const SizedBox(),this.onTap});
+  const TabBarTopComponent({super.key,required this.current,required this.tabs,this.colorTab,this.tabViews = const SizedBox(),this.onTap});
   final List<String> tabs;
   final int current;
+  final Color? colorTab;
   final Widget tabViews;
   final Function(int)? onTap;
   @override
@@ -75,7 +75,7 @@ class _TabBarTopComponentState extends State<TabBarTopComponent> {
                             });
                           },
                           child: Container(
-                            color: AppColor.nearlyBlue,
+                            color: widget.colorTab ?? AppColor.nearlyBlue,
                             width: size.width/(widget.tabs.length),
                             child: Center(
                               child: Text(
@@ -86,7 +86,7 @@ class _TabBarTopComponentState extends State<TabBarTopComponent> {
                                   fontWeight: widget.current == index
                                     ? FontWeight.w600
                                     : FontWeight.w500,
-                                  color: AppColor.whiteColor.withOpacity(widget.current == index ? 1 : .6)
+                                  color: (widget.colorTab==AppColor.whiteColor?AppColor.blueColor:AppColor.whiteColor).withOpacity(widget.current == index ? 1 : .6)
                                 ),
                               ),
                             ),

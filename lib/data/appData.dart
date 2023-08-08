@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../models/apps/product.Model.dart';
 
 class AppKey{
-  static final int keyTabMain = 1;
-  static final int keyTabNotify = 2;
+  static GlobalKey<NavigatorState> keyTabMain = GlobalKey<NavigatorState>(debugLabel: 'main');
+  static GlobalKey<NavigatorState> keyTabNotify = GlobalKey<NavigatorState>(debugLabel: 'notify');
+  static GlobalKey<NavigatorState> keyTabAuth = GlobalKey<NavigatorState>(debugLabel: 'auth');
 }
 class pageSizeConfig{
   static final int page = 1;
@@ -28,5 +30,4 @@ class AppDatas{
   static List<String> permissionApprove = [
     "",
   ];
-
 }

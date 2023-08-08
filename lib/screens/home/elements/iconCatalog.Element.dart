@@ -4,7 +4,7 @@ import 'package:kidsworld/configs/appStyle.Config.dart';
 import '../../../data/appData.dart';
 
 class IconCatalog extends StatefulWidget {
-  IconCatalog({super.key,this.icon,this.title = "",this.colorBackground = AppColor.nearlyBlue,this.onTap});
+  IconCatalog({super.key,this.icon,this.title = "",this.colorBackground,this.onTap});
   IconData? icon;
   String? title;
   Color? colorBackground;
@@ -19,18 +19,14 @@ class _IconCatalogState extends State<IconCatalog> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return GestureDetector(
-      onTap: (){
-        if(widget.onTap!=null){
-          widget.onTap;
-        }
-      },
+      onTap: widget.onTap??(){},
       child: Column(
         children: [
           Container(
             height: size.width*.11,
             width: size.width*.11,
             decoration: BoxDecoration(
-              color: widget.colorBackground,
+              color: widget.colorBackground ?? AppColor.nearlyBlue,
               borderRadius: BorderRadius.circular(100) 
             ),
             child: Icon(

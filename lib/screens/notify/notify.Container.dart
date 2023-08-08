@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kidsworld/components/tabBars/tabBar.Component.dart';
 import 'package:kidsworld/data/appData.dart';
 
 import '../../components/tabBars/tabBarTop.Component.dart';
@@ -13,19 +14,10 @@ class NotifyScreen extends GetWidget<NotifyController> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    return Obx(()=>TabBarTopComponent(
-      tabs: notifyController.myTabs,
-      current: notifyController.tabIndex.value,
-      onTap: notifyController.switchTap,
-      tabViews: Container(
-        height: size.height,
-        width: size.width,
-        child: Navigator(
-          key: Get.nestedKey(AppKey.keyTabNotify),
-          initialRoute: AppRouter.transfer,
-          onGenerateRoute: notifyController.onGenerateRouteNotify,
-        ),
-      ),
-    ));
+    return TabBarComponent(
+      listTab: notifyController.myTabs,
+      listPageView: notifyController.myListPage,
+      colorTab: AppColor.nearlyBlue,
+    );
   }
 }

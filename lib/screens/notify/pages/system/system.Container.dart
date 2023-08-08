@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'system.Controller.dart';
 
 class SystemScreen extends GetWidget<SystemController> {
-  // final SystemController systemController = Get.find();
+  final SystemController systemController = Get.put(SystemController());
   late Size size;
   @override
   Widget build(BuildContext context) {

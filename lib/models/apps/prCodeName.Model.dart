@@ -5,7 +5,8 @@ class PrCodeName {
   String? keyword;
   dynamic value;
   dynamic value2;
-  PrCodeName({this.code,this.name,this.codeDisplay,this.keyword,this.value,this.value2});
+  dynamic value3;
+  PrCodeName({this.code,this.name,this.codeDisplay,this.keyword,this.value,this.value2,this.value3});
 
   factory PrCodeName.fromJson(Map<String, dynamic>? json) {
     late PrCodeName result = PrCodeName();

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:kidsworld/configs/appStyle.Config.dart';
 
+import '../../data/appData.dart';
+
 class SkeltonComponent extends StatelessWidget {
-  const SkeltonComponent({super.key,this.horizontalType = false,this.neverPhysic = true,this.itemCount = 5});
+  SkeltonComponent({super.key,this.horizontalType = false,this.neverPhysic = true,this.itemCount = 5,this.isGridView = false});
   final bool horizontalType;
   final bool neverPhysic;
   final int itemCount;
+  final bool isGridView;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -59,14 +62,33 @@ class SkeltonComponent extends StatelessWidget {
       ;
     }
 
-    return ListView.separated(
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      physics: neverPhysic?const NeverScrollableScrollPhysics():const AlwaysScrollableScrollPhysics(),
-      scrollDirection: horizontalType?Axis.horizontal:Axis.vertical,
-      itemBuilder: (context, index) => _buildNewCardSkelton(horizontalType),
-      separatorBuilder: (context, intdex) => horizontalType?const SizedBox(height: 16,):const SizedBox(width: 16,),
-      itemCount: itemCount
+    return SizedBox(
+      width: size.width,
+      height: horizontalType?size.height*AppDatas.ratioHeightPrdColumn:size.height,
+      child: isGridView
+      ?GridView.builder(
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 3/2,
+          mainAxisExtent: size.height*AppDatas.ratioHeightPrdColumn,
+          crossAxisSpacing: AppDatas.paddingWidth,
+          mainAxisSpacing: AppDatas.paddingWidth
+        ),
+        itemCount: 2,
+        itemBuilder: (context, index) => _buildNewCardSkelton(horizontalType),
+      )
+      :ListView.separated(
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        physics: neverPhysic?const NeverScrollableScrollPhysics():const AlwaysScrollableScrollPhysics(),
+        scrollDirection: horizontalType?Axis.horizontal:Axis.vertical,
+        itemBuilder: (context, index) => _buildNewCardSkelton(horizontalType),
+        separatorBuilder: (context, intdex) => horizontalType?const SizedBox(height: 16,):const SizedBox(width: 16,),
+        itemCount: itemCount
+      ),
     );
   }
 

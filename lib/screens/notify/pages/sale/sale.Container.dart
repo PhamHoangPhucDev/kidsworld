@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../data/appData.dart';
 import '../../elements/boxItemNotify.Element.dart';
 import 'sale.Controller.dart';
 
 class SaleScreen extends GetWidget<SaleController> {
-  final SaleController saleController = Get.find();
+  final SaleController saleController = Get.put(SaleController());
   late Size size;
   @override
   Widget build(BuildContext context) {

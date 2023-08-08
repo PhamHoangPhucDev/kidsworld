@@ -6,6 +6,7 @@ class AppRouter {
   static const String discount = '/discount';
   static const String notify = '/notify';
   static const String profile = '/profile';
+  static const String authen = '/authen';
   static const String welcome = '/welcome';
   static const String introduction = '/intro';
   static const String signUp = '/authen/signup';
@@ -18,4 +19,11 @@ class AppRouter {
   static const String transfer= '/notify/transfer';
 
   static const String product = '/product';
+  static const String shoppingCart = '/shoppingCart';
+
+  static const String userInfo = '/profile/userInfo';
+
+
+  static const String staticAuth = '/staticAuth';
+
 }

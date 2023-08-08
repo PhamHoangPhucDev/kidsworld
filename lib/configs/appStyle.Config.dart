@@ -15,6 +15,7 @@ class AppColor extends Color {
   static const Color nearlyBlack = Color(0xFF213333);
   static const Color grey = Color(0xFF3A5160); 
   static const Color dark_grey = Color(0xFF313A44);
+  static Color greyOpa = Color(0xFF253840).withOpacity(.5);
   static const Color violet = Color(0xFFC02ECC);
   static const Color yellow = Color.fromARGB(255, 241, 222, 13);
   static Color cottonSeed = const Color(0XFFBCBCBC);
@@ -132,5 +133,21 @@ class DesignCourseAppTheme {
     fontSize: 16,
     letterSpacing: 0.2,
     color: AppColor.darkText,
+  );
+
+  static TextStyle font16White = TextStyle(
+    fontFamily: 'WorkSans',
+    fontWeight: FontWeight.w700,
+    fontSize: 16,
+    letterSpacing: 0.2,
+    color: AppColor.whiteColor,
+  );
+
+  static TextStyle font20White = TextStyle(
+    fontFamily: 'WorkSans',
+    fontWeight: FontWeight.w500,
+    fontSize: 20,
+    letterSpacing: 0.2,
+    color: AppColor.whiteColor,
   );
 }

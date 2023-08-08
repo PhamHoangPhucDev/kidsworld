@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'transfer.Controller.dart';
 
 class TransferScreen extends GetWidget<TransferController> {
-  // final TransferController transferController = Get.find();
+  final TransferController transferController = Get.put(TransferController());
   late Size size;
   @override
   Widget build(BuildContext context) {
